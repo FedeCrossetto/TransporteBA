@@ -9,10 +9,11 @@ import { Phone, Mail, Instagram, MapPin, Clock, Briefcase, Plane } from "lucide-
 import { TarifasSection } from "@/components/tarifas-section"
 import { ReservaForm } from "@/components/reserva-form"
 import { Toaster } from "@/components/ui/toaster"
+import { FloatingWhatsApp } from "@/components/FloatingWhatsApp"
 
 export default function Home() {
   const currentYear = new Date().getFullYear()
-  const whatsappLink = "https://wa.me/+5491100000000" // Replace with actual number
+  const whatsappLink = "https://wa.me/+5491125258583" // Replace with actual number
 
   // Función para manejar el scroll suave
   const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
@@ -91,12 +92,7 @@ export default function Home() {
             </ul>
           </nav>
           <div className="flex flex-1 items-center justify-end space-x-4">
-            <Link href={whatsappLink} target="_blank" rel="noopener noreferrer" className="hidden md:flex">
-              <Button variant="outline" size="sm" className="gap-1">
-                <Phone className="h-4 w-4" />
-                <span>Contactar</span>
-              </Button>
-            </Link>
+            {/* Remove the WhatsApp contact button */}
           </div>
         </div>
       </header>
@@ -122,10 +118,10 @@ export default function Home() {
                 Traslados seguros, puntuales y confortables para aeropuertos, eventos y viajes particulares.
               </p>
               <div className="pt-4">
-                <Link href={whatsappLink} target="_blank" rel="noopener noreferrer">
+                <Link href="#reservas" onClick={(e) => handleSmoothScroll(e, "reservas")}>
                   <Button size="lg" className="gap-2">
                     <Phone className="h-5 w-5" />
-                    Solicitar viaje
+                    Solicitá un viaje
                   </Button>
                 </Link>
               </div>
@@ -370,6 +366,7 @@ export default function Home() {
       </footer>
 
       <Toaster />
+      <FloatingWhatsApp />
     </div>
   )
 }

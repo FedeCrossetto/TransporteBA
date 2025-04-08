@@ -10,7 +10,7 @@ import { useToast } from "@/components/ui/use-toast"
 
 export function ReservaForm() {
   const { toast } = useToast()
-  const whatsappLink = "https://wa.me/+5491100000000" // Reemplazar con número real
+  const whatsappLink = "https://wa.me/+5491125258583" // Reemplazar con número real
   const [formData, setFormData] = useState({
     nombre: "",
     telefono: "",

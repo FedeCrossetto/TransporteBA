@@ -1,47 +1,54 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 interface Tarifa {
   id: number
-  origen: string
-  destino: string
+  servicio: string
   precio: string
-  es_final: boolean
+  descripcion: string
 }
 
+const fallbackTarifas: Tarifa[] = [
+  {
+    id: 1,
+    servicio: "Traslado Aeropuerto Ezeiza",
+    precio: "15000",
+    descripcion: "Servicio puerta a puerta"
+  },
+  {
+    id: 2,
+    servicio: "Traslado Aeroparque",
+    precio: "10000",
+    descripcion: "Servicio puerta a puerta"
+  },
+  {
+    id: 3,
+    servicio: "Viajes Zona Sur",
+    precio: "8000",
+    descripcion: "Precio base hasta 20km"
+  }
+]
+
 export function TarifasSection() {
-  const [tarifas, setTarifas] = useState<Tarifa[]>([])
+  const [tarifas, setTarifas] = useState<Tarifa[]>(fallbackTarifas)
   const [isLoading, setIsLoading] = useState(true)
-  const whatsappLink = "https://wa.me/+5491100000000" // Reemplazar con número real
 
   useEffect(() => {
-    async function fetchTarifas() {
+    const fetchTarifas = async () => {
       try {
         const response = await fetch("/api/tarifas")
         if (!response.ok) {
-          throw new Error("Error al cargar las tarifas")
+          console.warn("Usando tarifas de respaldo debido a error en la API")
+          return
         }
         const data = await response.json()
-        setTarifas(data)
+        if (data && data.length > 0) {
+          setTarifas(data)
+        }
       } catch (error) {
-        console.error("Error:", error)
-        // Usar datos de ejemplo si hay un error
-        setTarifas([
-          { id: 1, origen: "CABA", destino: "EZEIZA", precio: "$43000", es_final: true },
-          { id: 2, origen: "EZEIZA", destino: "CABA", precio: "$43000", es_final: true },
-          { id: 3, origen: "Terminal de RETIRO", destino: "EZEIZA", precio: "$45000", es_final: true },
-          { id: 4, origen: "EZEIZA", destino: "Terminal de RETIRO", precio: "$45000", es_final: true },
-          { id: 5, origen: "AEROPARQUE", destino: "EZEIZA", precio: "$47000", es_final: true },
-          { id: 6, origen: "EZEIZA", destino: "AEROPARQUE", precio: "$47000", es_final: true },
-          { id: 7, origen: "EZEIZA", destino: "NORDELTA", precio: "Consultar", es_final: true },
-          { id: 8, origen: "EZEIZA", destino: "CAMPANA", precio: "Consultar", es_final: true },
-          { id: 9, origen: "EZEIZA", destino: "ROSARIO", precio: "Consultar", es_final: false },
-          { id: 10, origen: "EZEIZA", destino: "LA PLATA", precio: "Consultar", es_final: false },
-          { id: 11, origen: "EZEIZA", destino: "MAR DEL PLATA", precio: "Consultar", es_final: false },
-        ])
+        console.warn("Error al cargar tarifas:", error)
       } finally {
         setIsLoading(false)
       }
@@ -50,52 +57,33 @@ export function TarifasSection() {
     fetchTarifas()
   }, [])
 
+  if (isLoading) {
+    return <div className="text-center py-8">Cargando tarifas...</div>
+  }
+
   return (
-    <section id="tarifas" className="py-16 bg-white">
+    <section id="tarifas" className="py-16 bg-muted/50">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Nuestras Tarifas</h2>
-          <div className="h-1 w-20 bg-yellow-400 mx-auto mb-6"></div>
+          <h2 className="text-3xl font-bold mb-4">Tarifas</h2>
+          <div className="h-1 w-20 bg-primary mx-auto mb-6"></div>
           <p className="text-lg text-muted-foreground">
-            Ofrecemos tarifas competitivas para todos nuestros servicios de transporte. Precios finales sin cargos
-            adicionales.
+            Nuestras tarifas son transparentes y competitivas. Consulte por descuentos en viajes frecuentes.
           </p>
         </div>
 
-        <div className="max-w-4xl mx-auto overflow-x-auto">
-          {isLoading ? (
-            <div className="text-center py-8">Cargando tarifas...</div>
-          ) : (
-            <table className="w-full border-collapse">
-              <thead>
-                <tr>
-                  <th className="bg-black text-yellow-400 py-3 px-4 text-left font-bold">VIAJE</th>
-                  <th className="bg-black text-yellow-400 py-3 px-4 text-left font-bold">COSTO</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tarifas.map((tarifa) => (
-                  <tr key={tarifa.id} className="border-b">
-                    <td className="py-3 px-4">
-                      {tarifa.origen} - {tarifa.destino}
-                    </td>
-                    <td className="py-3 px-4">
-                      {tarifa.precio}
-                      {tarifa.es_final ? " - FINAL" : ""}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
-
-        <div className="flex justify-center mt-10">
-          <Link href="#reservas">
-            <Button className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-3 px-8 rounded-full">
-              HAGA SU RESERVA AQUÍ
-            </Button>
-          </Link>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {tarifas.map((tarifa) => (
+            <Card key={tarifa.id}>
+              <CardHeader>
+                <CardTitle className="text-xl">{tarifa.servicio}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-2xl font-bold text-primary">${tarifa.precio}</p>
+                <p className="text-sm text-muted-foreground mt-2">{tarifa.descripcion}</p>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
     </section>
