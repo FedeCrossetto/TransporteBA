@@ -27,6 +27,10 @@ const nextConfig = {
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
   },
+  i18n: {
+    locales: ['es', 'en'],
+    defaultLocale: 'es'
+  }
 }
 
 if (userConfig) {
